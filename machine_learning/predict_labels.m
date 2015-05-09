@@ -30,19 +30,20 @@ function predicted_labels = predict_labels(train_features, train_labels, test_fe
     end
     
     [F, M] = size(test_features);
-    predicted_labels = zeros(1, M);
+    predicted_labels = cell(1, M);
     
     for m = 1:M
         dot_product = train_features' * test_features(:, m);
         
         % K-Nearest Neighbor
-        [~, sorted_indices] = sort(dot_product,'descend');
-        sorted_indices = sorted_indices(1:k);
-        label = mode(train_labels(sorted_indices));
-        
+%         [~, sorted_indices] = sort(dot_product,'descend');
+%         sorted_indices = sorted_indices(1:k);
+%         [unique_strings, ~, string_map] = unique(train_labels(sorted_indices));
+%         label = unique_strings(mode(string_map));
+%         
         % Nearest Neighbor
-%         [~, index] = max(dot_product);
-%         label = train_labels(index);
+        [~, index] = max(dot_product);
+        label = train_labels(index);
         
         predicted_labels(m) = label;
     end

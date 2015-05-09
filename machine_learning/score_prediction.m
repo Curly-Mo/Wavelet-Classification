@@ -25,7 +25,7 @@ score_prediction(test_labels, predicted_labels, plot)
 % instrument class 1, per class accuracy[2] for
 % instrument class 2, etc.
 
-    confusion = confusionmat(test_labels, predicted_labels);
+    [confusion, order] = confusionmat(test_labels, predicted_labels);
     
     [T, P] = size(confusion);
         
@@ -37,14 +37,14 @@ score_prediction(test_labels, predicted_labels, plot)
     per_class_accuracy = zeros(1, P);
     for i = 1:P
         class_correct = sum(confusion(i,i));
-        class_total = sum(test_labels == i);
+        class_total = sum(confusion(i,:));
         per_class_accuracy(i) = class_correct/class_total;
     end
     
     % Create percentage confusion matrix
     percent_confusion = zeros(size(confusion));
     for i = 1:T
-        class_total = sum(test_labels == i);
+        class_total = sum(confusion(i,:));
         percent_confusion(i,:) = confusion(i,:)/class_total;
     end
     
@@ -65,9 +65,9 @@ score_prediction(test_labels, predicted_labels, plot)
         set(hStrings,{'Color'},num2cell(textColors,2));
         set(gca,...
             'XTick',1:P,...
-            'XTickLabel',1:P,...
+            'XTickLabel',order,...
             'YTick',1:P,...
-            'YTickLabel',1:P,...
+            'YTickLabel',order,...
             'TickLength',[0 0]);
     end
 end

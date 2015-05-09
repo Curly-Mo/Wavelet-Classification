@@ -1,6 +1,18 @@
-function main()
-% Print the Overall Accuracy and per-class accuracy
+function main(train_dir, test_dir, model_file)
+    tic;
 
+    % Default values for optional parameters
+    if ~exist('train_dir', 'var')
+       train_dir = 'data/train';
+    end
+    if ~exist('test_dir', 'var')
+       test_dir = 'data/test';
+    end
+    if exist(model_file, 'file')
+       model = load(model_file);
+       disp(model);
+    end
+    
     % Add required paths
     addpath(genpath('feature_extraction/mfcc'));
     addpath(genpath('machine_learning'));
@@ -14,25 +26,43 @@ function main()
     params.num_mel_filts = 40;
     params.n_dct = 15;
     
-    % Get cell-array of trian and test files
-    train_dir = 'data/train';
-    test_dir = 'data/test';
-    train_files = dir(fullfile(train_dir, '*.wav'));
-    train_filenames = fullfile(train_dir, {train_files.name});
-    test_files = dir(fullfile(test_dir, '*.wav'));
-    test_filenames = fullfile(test_dir, {test_files.name});
+    % Get cell-array of train and test files/labels
+    disp('Loading files...');
+    [train_files, train_labels] = get_files(train_dir);
+    [test_files, test_labels] = get_files(test_dir);
     
     % Compute Features
-    [train_features, train_labels, a, b] = create_train_set(train_filenames, params);
-    [test_features, test_labels] = create_test_set(test_filenames, params, a, b);
+    if ~isfield(model, {'train_features', 'train_labels', 'a', 'b'})
+        toc;
+        disp('Computing train features...');
+        [train_features, train_labels, a, b] = create_train_set(train_files, train_labels, params);
+        model.train_features = train_features;
+        model.train_labels = train_labels;
+        model.a = a;
+        model.b = b;
+        if ~exist(model_file, 'var')
+            save(model_file, '-struct', 'model');
+        end
+    end
+    toc;
+    disp('Computing test features...');
+    [test_features, test_labels] = create_test_set(test_files, test_labels, params, model.a, model.b);
     
     % Predict class
-    predicted_labels = predict_labels(train_features, train_labels, test_features, 15);
+    toc;
+    disp('Predicting labels...');
+    predicted_labels = predict_labels(model.train_features, model.train_labels, test_features, 15);
     [overall_accuracy, per_class_accuracy] = score_prediction(test_labels, predicted_labels, true);
     
-    disp(['Files: ', test_filenames{:}]);
     disp(['Overall Accuracy: ', num2str(overall_accuracy)]);
     disp(['Per Class Accuracy: ', num2str(per_class_accuracy)]);
     disp(char(10));
-    %print(gcf, '-r600', 'plots/k_nearest_neighbor_synth', '-dpng');
+    
+    if ~exist('output', 'dir')
+       mkdir('output');
+    end 
+    print(gcf, '-r600', ['output/', datestr(clock, 0)], '-dpng');
+    
+    disp('Done');
+    toc;
 end

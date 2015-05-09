@@ -1,9 +1,9 @@
-function [train_features, train_labels, a, b] = create_train_set(file_paths, params)
+function [train_features, train_labels, a, b] = create_train_set(files, labels, params)
 % Compute features and parameters for traiv
 %
 % Parameters
 % ----------
-% file_paths: cell-array
+% file_paths: cell-array of cell-arrays
 % list of full paths to audio files with train data
 % params: struct
 % Matlab structure with fields are win size, hop size,
@@ -22,20 +22,25 @@ function [train_features, train_labels, a, b] = create_train_set(file_paths, par
     train_labels = [];
     train_features = [];
     
-    for i = 1:length(file_paths)
-        [mfccs, fs_mfcc] = compute_mfccs(char(file_paths(i)), ...
-                                         params.win_size, ...
-                                         params.hop_size, ...
-                                         params.min_freq, ...
-                                         params.max_freq, ...
-                                         params.num_mel_filts, ...
-                                         params.n_dct);
-        features = compute_features(mfccs, fs_mfcc);
-        
-        train_features = [train_features, features];
-        train_labels = [train_labels, ones(1,size(features,2)) * i];
+    for i = 1:length(files)
+        for f = 1:length(files{i})
+            [mfccs, fs_mfcc] = compute_mfccs(files{i}{f}, ...
+                                             params.win_size, ...
+                                             params.hop_size, ...
+                                             params.min_freq, ...
+                                             params.max_freq, ...
+                                             params.num_mel_filts, ...
+                                             params.n_dct);
+            features = compute_features(mfccs, fs_mfcc);
+
+            train_features = [train_features, features];
+            train_labels = [train_labels, ones(1,size(features,2)) * i];
+        end
     end
     
     % Normalize all features together
     [train_features, a, b] = normalize_features(train_features);
+    
+    % Convert int labels to strings
+    train_labels = labels(train_labels);
 end

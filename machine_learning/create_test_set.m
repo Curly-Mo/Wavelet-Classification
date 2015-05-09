@@ -1,4 +1,4 @@
-function [test_features, test_labels] = create_test_set(file_paths, params, a, b)
+function [test_features, test_labels] = create_test_set(files, labels, params, a, b)
 % Compute features and parameters for test data.
 %
 % Parameters
@@ -27,21 +27,25 @@ function [test_features, test_labels] = create_test_set(file_paths, params, a, b
     test_labels = [];
     test_features = [];
     
-    for i = 1:length(file_paths)
-        [mfccs, fs_mfcc] = compute_mfccs(char(file_paths(i)), ...
-                                         params.win_size, ...
-                                         params.hop_size, ...
-                                         params.min_freq, ...
-                                         params.max_freq, ...
-                                         params.num_mel_filts, ...
-                                         params.n_dct);
-        features = compute_features(mfccs, fs_mfcc);
-        
-        test_features = [test_features, features];
-        test_labels = [test_labels, ones(1,size(features,2)) * i];
+    for i = 1:length(files)
+        for f = 1:length(files{i})
+            [mfccs, fs_mfcc] = compute_mfccs(files{i}{f}, ...
+                                             params.win_size, ...
+                                             params.hop_size, ...
+                                             params.min_freq, ...
+                                             params.max_freq, ...
+                                             params.num_mel_filts, ...
+                                             params.n_dct);
+            features = compute_features(mfccs, fs_mfcc);
+
+            test_features = [test_features, features];
+            test_labels = [test_labels, ones(1,size(features,2)) * i];
+        end
     end
-    
+
     % Normalize
     [test_features, ~, ~] = normalize_features(test_features, a, b);
 
+    % Convert int labels to strings
+    test_labels = labels(test_labels);
 end
