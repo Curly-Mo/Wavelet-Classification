@@ -63,6 +63,10 @@ function main(train_dir, test_dir, model_file)
     if ~exist('output', 'dir')
        mkdir('output');
     end 
+    % Maximize figure before saving
+    disp('Saving figure...');
+    toc;
+    set(gcf,'PaperUnits','inches','PaperPosition',[0 0 16 10])
     print(gcf, '-r600', ['output/', datestr(clock, 0)], '-dpng');
     
     disp('Done');

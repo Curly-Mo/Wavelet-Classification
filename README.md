@@ -11,6 +11,12 @@ or
 python/extract_instrument_stems.py -d './data/train' -i 'piano' 'clean electric guitar' 'cello'
 ```
 
+Create the training set by putting .wav files under similarly named subdirectories in .data/test
+To create a testing set by removing files from the training set use:
+```
+python/create_test_set.py -s '.data/train' -d '.data/test' -l random -n 1
+```
+
 # Run
 Run main.m
 ```

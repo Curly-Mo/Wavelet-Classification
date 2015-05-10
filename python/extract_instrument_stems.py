@@ -8,12 +8,14 @@ import os
 import shutil
 import argparse
 from collections import defaultdict
+import subprocess
 
 import medleydb as mdb
 
 
 def get_valid_instruments(min_sources):
     """Get set of instruments with at least min_sources different sources"""
+    logging.info('Determining valid instruments...\n')
     multitrack_list = mdb.load_all_multitracks()
 
     instrument_counts = defaultdict(lambda: 0)
@@ -38,13 +40,15 @@ if __name__ == '__main__':
                              'for an instrument to be valid')
     parser.add_argument('-i', '--instruments', nargs='*', default=None,
                         help='List of instruments to extract')
+    parser.add_argument('-k', '--keep_silence', action='store_true',
+                        help="Don't remove silence from audio files")
     args = parser.parse_args()
 
     if args.instruments:
         valid_instruments = args.instruments
     else:
         valid_instruments = get_valid_instruments(args.min_sources)
-    logging.info('Extracting instruments: ' + str(valid_instruments))
+    logging.info('Valid instruments: ' + str(valid_instruments) + '\n')
 
     multitrack_list = mdb.load_all_multitracks()
 
@@ -62,4 +66,12 @@ if __name__ == '__main__':
                         os.makedirs(os.path.dirname(dest))
                     except OSError:
                         pass
-                    shutil.copyfile(stem.file_path, dest)
+                    if args.keep_silence:
+                        logging.info('Copying: ' + str(stem.file_path) + 'n')
+                        shutil.copyfile(stem.file_path, dest)
+                    else:
+                        logging.info('Removing silence from: ' + str(stem.file_path) + '\n')
+                        #mdb.sox.rm_silence(stem.filepath, dest, 0.1, 0.5)
+                        sox_args = ['sox', stem.file_path, dest, 'silence', '-l', '1', '0.00001', '0.1%', '-1', '1.0', '0.1%']
+                        logging.info(sox_args)
+                        process_handle = subprocess.Popen(sox_args, stderr=subprocess.PIPE)

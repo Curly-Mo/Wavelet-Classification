@@ -52,6 +52,7 @@ score_prediction(test_labels, predicted_labels, plot)
     disp(confusion);
     %disp(percent_confusion);
     if (exist('plot', 'var') && plot==true)
+        figure('units','normalized','outerposition',[0 0 1 1])
         str_confusion = [num2str(confusion(:)),...
                          repmat(10, T*P, 1),...% Newline
                          num2str(percent_confusion(:)*100, '%0.2f'),...
