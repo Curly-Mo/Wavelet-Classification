@@ -8,9 +8,11 @@ function main(train_dir, test_dir, model_file)
     if ~exist('test_dir', 'var')
        test_dir = 'data/test';
     end
-    if exist(model_file, 'file')
+    if exist('model_file', 'var') && exist(model_file, 'file')
        model = load(model_file);
        disp(model);
+    else
+        model = struct();
     end
     
     % Add required paths
