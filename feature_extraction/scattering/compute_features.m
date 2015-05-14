@@ -64,7 +64,7 @@ if m == 2
         proj1D = U*S;
         proj1D = proj1D(1,:);
         sPCA(:,i) = proj1D;
-    end,i) = sum(mtx,2);
+    end
     
     % average second-order scattering coeffs across one-second windows
     winSize = round(fs_scat);
