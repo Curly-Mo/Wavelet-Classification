@@ -67,7 +67,7 @@ min_freq, max_freq, num_mel_filts, n_dct)
     %imagesc(mel_filt_bank);set(gca,'ydir','normal');
     %plot(mel_filt_bank');
     
-    mel_power_spec = 20*log10(mel_filt_bank * abs(S));
+    mel_power_spec = mel_filt_bank * 20*log10(abs(S));
     
     % Plot mel power spec
     %imagesc(mel_power_spec);set(gca,'ydir','normal');

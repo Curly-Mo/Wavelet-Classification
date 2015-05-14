@@ -35,6 +35,9 @@ function [features_norm, a, b] = normalize_features(features, a, b)
     % Ignore a and b, normalize across columns instead
     features_norm = zeros(size(features));
     for m = 1:size(features, 2)
-        features_norm(:, m) = features(:, m)/norm(features(:, m), 2);
+        n = norm(features(:, m), 2);
+        if n ~= 0
+            features_norm(:, m) = features(:, m)/n;
+        end
     end
 end

@@ -8,7 +8,6 @@ import os
 import shutil
 import argparse
 from collections import defaultdict
-import subprocess
 
 import medleydb as mdb
 
@@ -71,7 +70,6 @@ if __name__ == '__main__':
                         shutil.copyfile(stem.file_path, dest)
                     else:
                         logging.info('Removing silence from: ' + str(stem.file_path) + '\n')
-                        #mdb.sox.rm_silence(stem.filepath, dest, 0.1, 0.5)
-                        sox_args = ['sox', stem.file_path, dest, 'silence', '-l', '1', '0.00001', '0.1%', '-1', '1.0', '0.1%']
-                        logging.info(sox_args)
-                        process_handle = subprocess.Popen(sox_args, stderr=subprocess.PIPE)
+                        mdb.sox.rm_silence(stem.file_path, dest, 0.1, 0.2)
+                        #sox_args = ['sox', stem.file_path, dest, 'silence', '-l', '1', '0.00001', '0.1%', '-1', '1.0', '0.1%']
+                        #process_handle = subprocess.Popen(sox_args, stderr=subprocess.PIPE)
