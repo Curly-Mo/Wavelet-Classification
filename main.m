@@ -22,7 +22,7 @@ function main(train_dir, test_dir, feature, classifier, model_file)
     else
         model = struct();
         % Set parameters
-        model.params.win_size = 2048;
+        model.params.win_size = 1024;
         model.params.hop_size = 512;
         model.params.min_freq = 60;
         model.params.max_freq = 8000;
