@@ -28,7 +28,6 @@ function main(train_dir, test_dir, feature, classifier, model_file)
         model.params.max_freq = 8000;
         model.params.num_mel_filts = 40;
         model.params.n_dct = 15;
-        model.params.m = 2;
     end
     
     % Add required paths
@@ -38,6 +37,16 @@ function main(train_dir, test_dir, feature, classifier, model_file)
         addpath(genpath('feature_extraction/mfcc'));
     elseif strcmp(feature, 'scattering')
         addpath(genpath('feature_extraction/scattering'));
+        model.params.opt.M = 1;
+    elseif strcmp(feature, 'scattering2')
+        addpath(genpath('feature_extraction/scattering2'));
+        % Scattering options
+        model.params.opt.M = 2;     % Scattering order
+        model.params.opt.Q = 16;	% Q-factor of filter
+        model.params.opt.J = 80;	% Maximal scale corresponding to T=Q*2^(J/Q+1),
+        model.params.opt.aa = 1;
+        model.params.opt.aa_psi = 2;
+        model.params.opt.delta = -model.params.opt.Q;
     end
     
     % Get cell-array of train and test files/labels
@@ -49,18 +58,16 @@ function main(train_dir, test_dir, feature, classifier, model_file)
     if ~isfield(model, {'train_features', 'train_labels', 'a', 'b'})
         toc;
         disp('Computing train features...');
-        [train_features, train_labels, a, b] = create_train_set(train_files, train_classes, model.params);
+        [train_features, train_labels] = create_train_set(train_files, train_classes, model.params);
         model.train_features = train_features;
         model.train_labels = train_labels;
-        model.a = a;
-        model.b = b;
         if exist('model_file', 'var')
             save(model_file, '-struct', 'model');
         end
     end
     toc;
     disp('Computing test features...');
-    [test_features, test_labels] = create_test_set(test_files, test_classes, model.params, model.a, model.b);
+    [test_features, test_labels] = create_test_set(test_files, test_classes, model.params);
     
     % Predict class
     toc;

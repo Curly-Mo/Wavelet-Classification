@@ -18,20 +18,29 @@ function [train_features, train_labels] = create_train_set(files, labels, params
 % train labels: 1 x NE array
 % vector of labels (class numbers) for each instance
 % of train features
-
+    % Initialize scatterbox package
+    addpath(genpath('scatterbox'));
+    startup();
+    params.opt.format = 'array';
+    
     train_labels = [];
     train_features = [];
     
     for i = 1:length(files)
         for f = 1:length(files{i})
-            [scat_coeff, fs_scat, basis] = compute_scattering_coeffs(files{i}{f}, ...
-                                             params.win_size, ...
-                                             params.hop_size, ...
-                                             params.min_freq, ...
-                                             params.max_freq, ...
-                                             params.num_mel_filts, ...
-                                             params.opt.M);
-            features = compute_features(scat_coeff, fs_scat, params.n_dct);
+            [x, fs, t] = import_audio(files{i}{f});
+            N = params.win_size;
+            noverlap = N - params.hop_size;
+            params.opt.filters = audio_filter_bank([N 1],params.opt);
+          
+            buffered_x = buffer(x, N, noverlap, 'nodelay');
+            scat_coeff = zeros(size(scatt(buffered_x(:, 1), params.opt),1), size(buffered_x, 2));
+
+            for m = 1:size(buffered_x, 2)
+                scat_coeff(:, m) = scatt(buffered_x(:, m), params.opt)';
+            end
+            fs_scat = fs/params.hop_size;
+            features = compute_features(scat_coeff, fs_scat);
 
             train_features = [train_features, features];
             train_labels = [train_labels, ones(1,size(features,2)) * i];

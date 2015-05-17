@@ -21,4 +21,7 @@ function [x_t, fs, t] = import_audio(filepath)
     end
     
     t = 0:1/fs:(len-1)/fs;
+    
+    % Normalize
+    x_t = x_t/norm(x_t);
 end

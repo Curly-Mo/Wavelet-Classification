@@ -1,4 +1,4 @@
-function [test_features, test_labels] = create_test_set(files, labels, params, a, b)
+function [test_features, test_labels] = create_test_set(files, labels, params)
 % Compute features and parameters for test data.
 %
 % Parameters
@@ -44,7 +44,7 @@ function [test_features, test_labels] = create_test_set(files, labels, params, a
     end
 
     % Normalize
-    [test_features, ~, ~] = normalize_features(test_features, a, b);
+    test_features = normalize_features(test_features);
 
     % Convert int labels to strings
     test_labels = labels(test_labels);

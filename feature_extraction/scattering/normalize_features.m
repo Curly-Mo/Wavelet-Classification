@@ -1,4 +1,4 @@
-function [features_norm, a, b] = normalize_features(features, a, b)
+function [features_norm] = normalize_features(features)
 % Normalize matrix of features.
 %
 % Colin Fahy
@@ -22,13 +22,14 @@ function [features_norm, a, b] = normalize_features(features, a, b)
 % a: NF x 1 array
 % normalization parameter
 % b: NF x 1 array
-% normalization parameter
-    if (~exist('a', 'var'))
-        a = min(features, [], 2);
-    end
-    if (~exist('b', 'var'))
-        b = max(bsxfun(@minus,features,a), [], 2);
-    end
+
+% % normalization parameter
+%     if (~exist('a', 'var'))
+%         a = min(features, [], 2);
+%     end
+%     if (~exist('b', 'var'))
+%         b = max(bsxfun(@minus,features,a), [], 2);
+%     end
     % Normalize across rows
     %features_norm = bsxfun(@rdivide, (bsxfun(@minus,features,a)), b);
     

@@ -1,4 +1,4 @@
-function [train_features, train_labels, a, b] = create_train_set(files, labels, params)
+function [train_features, train_labels] = create_train_set(files, labels, params)
 % Compute features and parameters for traiv
 %
 % Parameters
@@ -39,7 +39,7 @@ function [train_features, train_labels, a, b] = create_train_set(files, labels, 
     end
     
     % Normalize all features together
-    [train_features, a, b] = normalize_features(train_features);
+    train_features = normalize_features(train_features);
     
     % Convert int labels to strings
     train_labels = labels(train_labels);
