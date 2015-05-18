@@ -26,8 +26,9 @@ function [train_features, train_labels] = create_train_set(files, labels, params
     train_features = [];
     
     for i = 1:length(files)
+        disp(['instrument: ', num2str(i)]);
         for f = 1:length(files{i})
-            disp(f);
+            disp(files{i}{f});
             features = compute_cl_scatt(files{i}{f}, params.opt);
             
             train_features = [train_features, features];

@@ -31,6 +31,7 @@ function [test_features, test_labels] = create_test_set(files, labels, params)
     test_features = [];
     
     for i = 1:length(files)
+        disp(['instrument: ', num2str(i)]);
         for f = 1:length(files{i})
             features = compute_cl_scatt(files{i}{f}, params.opt);
 

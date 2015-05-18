@@ -45,7 +45,7 @@ function main(train_dir, test_dir, feature, classifier, model_file)
     elseif strcmp(feature, 'cls2')
         addpath(genpath('feature_extraction/scattering2'));
         model.params.opt.M = 2;
-        model.params.opt.J = 8;
+        model.params.opt.J = 16;
     end
     
     % Get cell-array of train and test files/labels
@@ -54,7 +54,7 @@ function main(train_dir, test_dir, feature, classifier, model_file)
     [test_files, test_classes] = get_files(test_dir);
     
     % Compute Features
-    if ~isfield(model, {'train_features', 'train_labels', 'a', 'b'})
+    if ~isfield(model, {'train_features', 'train_labels'})
         toc;
         disp('Computing train features...');
         [train_features, train_labels] = create_train_set(train_files, train_classes, model.params);

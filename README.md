@@ -10,7 +10,10 @@ main('data/train', 'data/test', 'mfcc', 'svm', 'mfcc_model.mat')
 main('data/train', 'data/test', 'scattering', 'svm', 'scattering_model.mat')
 ```
 ```
-main('data/train', 'data/test', 'scattering2', 'svm', 'scattering2_model.mat')
+main('data/train', 'data/test', 'cls1', 'knn', 'cls1_model.mat')
+```
+```
+main('data/train', 'data/test', 'cls2', 'svm', 'cls2_model.mat')
 ```
 
 # MedleyDB Setup
