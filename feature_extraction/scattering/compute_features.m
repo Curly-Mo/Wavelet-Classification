@@ -48,44 +48,43 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % feature extraction from second-order scattering transform
 
-% My attempt to just reduce the 2nd order coeffs down to a single vector
-% if m == 2
-%     % Convert matrix down to column vector
-%     S2 = zeros(size(scatCoeff, 1), size(scatCoeff, 2) * size(scatCoeff, 3));
-%     for i = 1:size(scatCoeff, 1)
-%         S2(i, :) = scatCoeff(1,:);
-%     end
-%     % average second-order scattering coeffs across one-second windows
-%     winSize = round(fs_scat);
-%     numWins = floor(size(S2,2)/winSize);
-%     features = zeros(size(S2,1),numWins);
-% 
-%     for coeff=1:size(S2,1)
-%         for idx=1:numWins
-%             startIdx = (idx-1)*winSize + 1;
-%             endIdx = idx*winSize;
-%             features(coeff,idx) = mean(S2(coeff,startIdx:endIdx));
-%         end
-%     end
-% end
-
 if m == 2
     
     numFilts = size(scatCoeff,1);
     N = size(scatCoeff,3);
     winSize = round(fs_scat);
     numWins = floor(N/winSize);
-    sDCT = zeros(n_dct,n_dct,N);
+    sDCT = zeros(N,numFilts,numFilts);
     
+    % take DCTs first along k and then along j
+    sPermute = permute(scatCoeff,[3 1 2]);
+    for k = 1:numFilts
+        scatCos2 = dct(squeeze(sPermute(:,:,k))')';
+        sDCT(:,:,k) = scatCos2;
+    end
+    
+    sDCT = permute(sDCT,[1 3 2]);
+    for j = 1:numFilts
+        scatCos1 = dct(squeeze(sPermute(:,j,:))')';
+        sDCT(:,:,j) = scatCos1;
+    end
+    sDCT = permute(sDCT,[2 3 1]);
+    sDCT = sDCT(1:n_dct,1:n_dct,:);
+
     % PCA for dimensionality reduction on each numFilts x numFilts matrix
     % of scattering coefficients
-    sPCA = zeros(numFilts,N);
+    sPCA = zeros(n_dct,N);
     for i = 1:N
-        [U,S,V] = svd(scatCoeff(:,:,i));
+        [U,S,V] = svd(sDCT(:,:,i));
         proj1D = U*S;
+        sing1(i) = S(1,1);
+        sing2(i) = S(2,2);
         proj1D = proj1D(1,:);
         sPCA(:,i) = proj1D;
     end
+
+    % remove first component
+    sPCA = sPCA(2:end,:);
     
     % average second-order scattering coeffs across one-second windows
     winSize = round(fs_scat);

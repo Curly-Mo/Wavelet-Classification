@@ -1,4 +1,4 @@
-# Wavelet-Classification
+# Scattering Transform for Instrument Classificiation
 
 
 # Run
@@ -36,3 +36,12 @@ To reduce the training set and ensure the same total duration (in seconds) for e
 ```
 python/trim_audio.py -s ./data/train/ -l 300
 ```
+
+
+# Dependencies
+* Required
+    * [libsvm](http://www.csie.ntu.edu.tw/~cjlin/libsvm/)
+    * [scatterbox](http://www.di.ens.fr/data/software/scatnet/)
+* Optional (Only needed for MedelyDB Setup)
+    * [medleydb](https://github.com/rabitt/medleydb)
+    * [sox](http://sox.sourceforge.net/)

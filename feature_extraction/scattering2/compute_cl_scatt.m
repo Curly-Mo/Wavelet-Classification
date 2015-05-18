@@ -1,4 +1,7 @@
 function features = compute_cl_scatt(filepath, params)
+% Compute features from a given audio filepath
+% averaged over seconds using the Scatterbox package.
+
     [x1, fs1, t] = import_audio(filepath);
     % J = 8 for example. can compare how classification differs for, say, J=4
     [f1] = cl_scatt(x1,params);
