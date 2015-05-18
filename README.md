@@ -13,7 +13,7 @@ main('data/train', 'data/test', 'scattering', 'svm', 'scattering_model.mat')
 main('data/train', 'data/test', 'scattering2', 'svm', 'scattering2_model.mat')
 ```
 
-# Setup
+# MedleyDB Setup
 To extract relevant files from MedleyDB:
 ```
 python/extract_instrument_stems.py --destination './data/train' --min_sources 10

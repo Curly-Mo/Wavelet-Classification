@@ -48,55 +48,59 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % feature extraction from second-order scattering transform
 
-if m == 2
-    % Convert matrix down to column vector
-    S2 = scatCoeff(:);
-    % average second-order scattering coeffs across one-second windows
-    winSize = round(fs_scat);
-    numWins = floor(size(S2,2)/winSize);
-    features = zeros(size(S2,1),numWins);
-
-    for coeff=1:size(S2,1)
-        for idx=1:numWins
-            startIdx = (idx-1)*winSize + 1;
-            endIdx = idx*winSize;
-            features(coeff,idx) = mean(S2(coeff,startIdx:endIdx));
-        end
-    end
-end
-
+% My attempt to just reduce the 2nd order coeffs down to a single vector
 % if m == 2
-%     
-%     numFilts = size(scatCoeff,1);
-%     N = size(scatCoeff,3);
-%     winSize = round(fs_scat);
-%     numWins = floor(N/winSize);
-%     sDCT = zeros(n_dct,n_dct,N);
-%     
-%     % PCA for dimensionality reduction on each numFilts x numFilts matrix
-%     % of scattering coefficients
-%     sPCA = zeros(numFilts,N);
-%     for i = 1:N
-%         [U,S,V] = svd(scatCoeff(:,:,i));
-%         proj1D = U*S;
-%         proj1D = proj1D(1,:);
-%         sPCA(:,i) = proj1D;
+%     % Convert matrix down to column vector
+%     S2 = zeros(size(scatCoeff, 1), size(scatCoeff, 2) * size(scatCoeff, 3));
+%     for i = 1:size(scatCoeff, 1)
+%         S2(i, :) = scatCoeff(1,:);
 %     end
-%     
 %     % average second-order scattering coeffs across one-second windows
 %     winSize = round(fs_scat);
-%     numWins = floor(size(sPCA,2)/winSize);
-%     features = zeros(size(sPCA,1),numWins);
+%     numWins = floor(size(S2,2)/winSize);
+%     features = zeros(size(S2,1),numWins);
 % 
-%     for coeff=1:size(sPCA,1)
+%     for coeff=1:size(S2,1)
 %         for idx=1:numWins
 %             startIdx = (idx-1)*winSize + 1;
 %             endIdx = idx*winSize;
-%             features(coeff,idx) = mean(sPCA(coeff,startIdx:endIdx));
+%             features(coeff,idx) = mean(S2(coeff,startIdx:endIdx));
 %         end
 %     end
-%     
 % end
+
+if m == 2
+    
+    numFilts = size(scatCoeff,1);
+    N = size(scatCoeff,3);
+    winSize = round(fs_scat);
+    numWins = floor(N/winSize);
+    sDCT = zeros(n_dct,n_dct,N);
+    
+    % PCA for dimensionality reduction on each numFilts x numFilts matrix
+    % of scattering coefficients
+    sPCA = zeros(numFilts,N);
+    for i = 1:N
+        [U,S,V] = svd(scatCoeff(:,:,i));
+        proj1D = U*S;
+        proj1D = proj1D(1,:);
+        sPCA(:,i) = proj1D;
+    end
+    
+    % average second-order scattering coeffs across one-second windows
+    winSize = round(fs_scat);
+    numWins = floor(size(sPCA,2)/winSize);
+    features = zeros(size(sPCA,1),numWins);
+
+    for coeff=1:size(sPCA,1)
+        for idx=1:numWins
+            startIdx = (idx-1)*winSize + 1;
+            endIdx = idx*winSize;
+            features(coeff,idx) = mean(sPCA(coeff,startIdx:endIdx));
+        end
+    end
+    
+end
 
 end
 

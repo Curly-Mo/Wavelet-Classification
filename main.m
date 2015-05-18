@@ -40,10 +40,19 @@ function main(train_dir, test_dir, feature, classifier, model_file)
         model.params.opt.M = 1;
     elseif strcmp(feature, 'scattering2')
         addpath(genpath('feature_extraction/scattering2'));
-        % Scattering options
+        model.params.feature = 'scattering2';
         model.params.opt.M = 2;     % Scattering order
         model.params.opt.Q = 16;	% Q-factor of filter
-        model.params.opt.J = 80;	% Maximal scale corresponding to T=Q*2^(J/Q+1),
+        model.params.opt.J = 40;	% Maximal scale corresponding to T=Q*2^(J/Q+1),
+        model.params.opt.aa = 1;
+        model.params.opt.aa_psi = 2;
+        model.params.opt.delta = -model.params.opt.Q;
+    elseif strcmp(feature, 'cls')
+        addpath(genpath('feature_extraction/scattering2'));
+        model.params.feature = 'cls';
+        model.params.opt.M = 1;     % Scattering order
+        model.params.opt.Q = 16;	% Q-factor of filter
+        model.params.opt.J = 8;	% Maximal scale corresponding to T=Q*2^(J/Q+1),
         model.params.opt.aa = 1;
         model.params.opt.aa_psi = 2;
         model.params.opt.delta = -model.params.opt.Q;

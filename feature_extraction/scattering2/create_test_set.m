@@ -26,27 +26,18 @@ function [test_features, test_labels] = create_test_set(files, labels, params)
     % Initialize scatterbox package
     addpath(genpath('scatterbox'));
     startup();
-    params.opt.format = 'array';
 
     test_labels = [];
     test_features = [];
     
     for i = 1:length(files)
         for f = 1:length(files{i})
-            [x, fs, t] = import_audio(files{i}{f});
-            N = params.win_size;
-            noverlap = N - params.hop_size;
-            params.opt.filters = audio_filter_bank([N 1],params.opt);
-          
-            buffered_x = buffer(x, N, noverlap, 'nodelay');
-            scat_coeff = zeros(size(scatt(buffered_x(:, 1), params.opt),1), size(buffered_x, 2));
-            
-            for m = 1:size(buffered_x, 2)
-                scat_coeff(:, m) = scatt(buffered_x(:, m), params.opt)';
+            if strcmp(params.feature, 'cls')
+                features = compute_cl_scatt(files{i}{f});
             end
-            
-            fs_scat = fs/params.hop_size;
-            features = compute_features(scat_coeff, fs_scat);
+            if strcmp(params.feature, 'scattering2')
+                features = compute_scatt2(files{i}{f});
+            end
 
             test_features = [test_features, features];
             test_labels = [test_labels, ones(1,size(features,2)) * i];

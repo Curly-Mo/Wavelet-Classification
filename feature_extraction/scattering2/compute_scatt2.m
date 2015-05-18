@@ -1,0 +1,19 @@
+function features = compute_scatt2(filepath)
+    [x1, fs1, t] = import_audio(filepath);
+    % J = 8 for example. can compare how classification differs for, say, J=4
+    params.J = 8;
+    [f1] = scatt(x1,params);
+    f1 = f1';
+    % average over 1 second windows
+    winSize = round(size(f1,2)/(length(x1)/fs1));
+    numWins = floor(size(f1,2)/winSize);
+    features = zeros(size(f1,1),numWins);
+
+    for coeff=1:size(f1,1)
+        for idx=1:numWins
+            startIdx = (idx-1)*winSize + 1;
+            endIdx = idx*winSize;
+            features(coeff,idx) = mean(f1(coeff,startIdx:endIdx));
+        end
+    end
+end
