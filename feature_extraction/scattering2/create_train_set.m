@@ -28,12 +28,7 @@ function [train_features, train_labels] = create_train_set(files, labels, params
     for i = 1:length(files)
         for f = 1:length(files{i})
             disp(f);
-            if strcmp(params.feature, 'cls')
-                features = compute_cl_scatt(files{i}{f});
-            end
-            if strcmp(params.feature, 'scattering2')
-                features = compute_scatt2(files{i}{f});
-            end
+            features = compute_cl_scatt(files{i}{f}, params.opt);
             
             train_features = [train_features, features];
             train_labels = [train_labels, ones(1,size(features,2)) * i];

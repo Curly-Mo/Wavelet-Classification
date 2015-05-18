@@ -38,24 +38,14 @@ function main(train_dir, test_dir, feature, classifier, model_file)
     elseif strcmp(feature, 'scattering')
         addpath(genpath('feature_extraction/scattering'));
         model.params.opt.M = 1;
-    elseif strcmp(feature, 'scattering2')
+    elseif strcmp(feature, 'cls1')
         addpath(genpath('feature_extraction/scattering2'));
-        model.params.feature = 'scattering2';
-        model.params.opt.M = 2;     % Scattering order
-        model.params.opt.Q = 16;	% Q-factor of filter
-        model.params.opt.J = 40;	% Maximal scale corresponding to T=Q*2^(J/Q+1),
-        model.params.opt.aa = 1;
-        model.params.opt.aa_psi = 2;
-        model.params.opt.delta = -model.params.opt.Q;
-    elseif strcmp(feature, 'cls')
-        addpath(genpath('feature_extraction/scattering2'));
-        model.params.feature = 'cls';
         model.params.opt.M = 1;     % Scattering order
-        model.params.opt.Q = 16;	% Q-factor of filter
         model.params.opt.J = 8;	% Maximal scale corresponding to T=Q*2^(J/Q+1),
-        model.params.opt.aa = 1;
-        model.params.opt.aa_psi = 2;
-        model.params.opt.delta = -model.params.opt.Q;
+    elseif strcmp(feature, 'cls2')
+        addpath(genpath('feature_extraction/scattering2'));
+        model.params.opt.M = 2;
+        model.params.opt.J = 8;
     end
     
     % Get cell-array of train and test files/labels
@@ -99,8 +89,11 @@ function main(train_dir, test_dir, feature, classifier, model_file)
     toc;
     disp('Saving figure...');
     % Set Dimensions before saving
-    set(gcf,'PaperUnits','inches','PaperPosition',[0 0 16 10])
-    print(gcf, '-r600', ['output/', datestr(clock, 0), '_', feature, '_', classifier], '-dpng');
+    title(['Feature: ' upper(feature) '    Classifier: ' upper(classifier) '    Overall Accuracy: ' num2str(overall_accuracy*100) '%']);
+    set(gcf,'PaperUnits','inches','PaperPosition',[0 0 16 10]);
+    set(gcf, 'PaperSize', [16 10]);
+    set(gcf,'renderer','painters');
+    print(gcf, '-r1600', '-painters', ['output/', datestr(clock, 0), '_', feature, '_', classifier], '-depsc2');
     
     disp('Done');
     toc;

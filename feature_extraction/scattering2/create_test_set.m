@@ -32,12 +32,7 @@ function [test_features, test_labels] = create_test_set(files, labels, params)
     
     for i = 1:length(files)
         for f = 1:length(files{i})
-            if strcmp(params.feature, 'cls')
-                features = compute_cl_scatt(files{i}{f});
-            end
-            if strcmp(params.feature, 'scattering2')
-                features = compute_scatt2(files{i}{f});
-            end
+            features = compute_cl_scatt(files{i}{f}, params.opt);
 
             test_features = [test_features, features];
             test_labels = [test_labels, ones(1,size(features,2)) * i];

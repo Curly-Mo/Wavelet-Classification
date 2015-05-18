@@ -1,7 +1,6 @@
-function features = compute_cl_scatt(filepath)
+function features = compute_cl_scatt(filepath, params)
     [x1, fs1, t] = import_audio(filepath);
     % J = 8 for example. can compare how classification differs for, say, J=4
-    params.J = 8;
     [f1] = cl_scatt(x1,params);
     f1 = f1';
     % average over 1 second windows
